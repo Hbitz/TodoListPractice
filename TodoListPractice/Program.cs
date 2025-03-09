@@ -1,4 +1,5 @@
 ﻿using TodoListPractice.Facade;
+using TodoListPractice.Observer;
 
 namespace TodoListPractice
 {
@@ -6,9 +7,10 @@ namespace TodoListPractice
     {
         static void Main(string[] args)
         {
-            //
-            TaskFacade taskFacade = new TaskFacade();
-            Menu menu = new Menu(taskFacade);
+            var notifier = new TaskNotifier();
+
+            //TaskFacade taskFacade = new TaskFacade();
+            Menu menu = new Menu(notifier);
             menu.ShowMenu();
         }
     }

@@ -9,7 +9,6 @@
 
   <ItemGroup>
     <Folder Include="Singleton\" />
-    <Folder Include="Observer\" />
   </ItemGroup>
 
   <ItemGroup>

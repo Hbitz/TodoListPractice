@@ -8,15 +8,19 @@ using System.Threading.Tasks;
 using System.Threading.Tasks.Sources;
 using TodoListPractice.Models;
 using Newtonsoft.Json;
+using TodoListPractice.Observer;
 
 namespace TodoListPractice.Facade
 {
     internal class TaskFacade
     {
         private const string FilePath = "tasks.json";
+        private readonly TaskNotifier notifier;
 
-        public TaskFacade()
+        public TaskFacade(TaskNotifier notifier)
         {
+            this.notifier = notifier;
+
             if (!File.Exists(FilePath))
             {
                 File.WriteAllText(FilePath, "[]"); // Creates empty JSON array
@@ -37,6 +41,9 @@ namespace TodoListPractice.Facade
             int newId = tasks.Count > 0 ? tasks[^1].Id + 1 : 1; // get next available ID
             tasks.Add(new TaskItem(newId, description));
             SaveTasks(tasks);
+
+            notifier.Notify();
+
         }
 
         public void UpdateTodo(int id, bool isCompleted)
@@ -47,6 +54,7 @@ namespace TodoListPractice.Facade
             {
                 task.IsCompleted = isCompleted;
                 SaveTasks(tasks);
+                notifier.Notify();
             }
         }
 
@@ -55,6 +63,7 @@ namespace TodoListPractice.Facade
             var tasks = GetTodos();
             tasks.RemoveAll(t => t.Id == id);
             SaveTasks(tasks);
+            notifier.Notify();
         }
 
         private void SaveTasks(List<TaskItem> tasks)

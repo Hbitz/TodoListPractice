@@ -5,16 +5,21 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TodoListPractice.Facade;
+using TodoListPractice.Observer;
 
 namespace TodoListPractice
 {
     internal class Menu
     {
-        private readonly TaskFacade _facade;
+        private readonly TaskFacade taskFacade;
 
-        public Menu(TaskFacade facade)
+        public Menu(TaskNotifier notifier)
         {
-            _facade = facade;
+            taskFacade = new TaskFacade(notifier);
+
+
+            var logger = new TaskLogger();
+            notifier.Attach(logger);
         }
 
         public void ShowMenu()
@@ -24,7 +29,7 @@ namespace TodoListPractice
                 Console.Clear();
                 AnsiConsole.MarkupLine("[bold underline blue]==== TODO LIST ====[/]");
 
-                var tasks = _facade.GetTodos();
+                var tasks = taskFacade.GetTodos();
 
                 if (tasks.Count == 0)
                 {
@@ -59,15 +64,15 @@ namespace TodoListPractice
                 {
                     case "Add Task":
                         var description = AnsiConsole.Ask<string>("Enter task description:");
-                        _facade.AddTodo(description);
+                        taskFacade.AddTodo(description);
                         break;
                     case "Mark Task as Completed":
                         int completeId = AnsiConsole.Ask<int>("Enter task ID to mark as completed:");
-                        _facade.UpdateTodo(completeId, true);
+                        taskFacade.UpdateTodo(completeId, true);
                         break;
                     case "Remove Task":
                         int removeId = AnsiConsole.Ask<int>("Enter task ID to remove:");
-                        _facade.RemoveTodo(removeId);
+                        taskFacade.RemoveTodo(removeId);
                         break;
                     case "Exit":
                         return;
