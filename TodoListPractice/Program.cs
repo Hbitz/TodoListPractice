@@ -7,7 +7,7 @@ namespace TodoListPractice
     {
         static void Main(string[] args)
         {
-            var notifier = new TaskNotifier();
+            var notifier = TaskNotifier.Instance;
 
             //TaskFacade taskFacade = new TaskFacade();
             Menu menu = new Menu(notifier);
