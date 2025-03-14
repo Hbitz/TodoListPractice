@@ -68,8 +68,13 @@ namespace TodoListPractice.Facade
 
         private void SaveTasks(List<TaskItem> tasks)
         {
-            string json = JsonConvert.SerializeObject(tasks, Formatting.Indented);
-            File.WriteAllText(FilePath, json);
+            // Using StreamWriter to avoid locking the file for too long, as well as preventing multiple file access.
+            using (var fileStream = new StreamWriter(FilePath))
+            {
+                string json = JsonConvert.SerializeObject(tasks, Formatting.Indented);
+                fileStream.Write(json);
+            }
+
         }
     }
 }
