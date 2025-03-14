@@ -12,12 +12,11 @@ namespace TodoListPractice.UI
     internal class Menu
     {
         private readonly TaskFacade taskFacade;
+        private readonly List<string> messages = new();
 
         public Menu(TaskNotifier notifier)
         {
-            taskFacade = new TaskFacade(notifier);
-
-
+            taskFacade = new TaskFacade(notifier, AddMessage); // Pass AddMessage method as a callback
             var logger = new TaskLogger();
             notifier.Attach(logger);
         }
@@ -29,13 +28,25 @@ namespace TodoListPractice.UI
                 Console.Clear();
                 AnsiConsole.MarkupLine("[bold underline blue]==== TODO LIST ====[/]");
 
+                // Display any messages for the user
+                if (messages.Any())
+                {
+                    Console.WriteLine("----------------------------");
+                    foreach (var msg in messages)
+                    {
+                        Console.WriteLine(msg);
+                    }
+                    Console.WriteLine("----------------------------");
+                    messages.Clear();
+                }
+
+
                 var tasks = taskFacade.GetTodos();
 
                 if (tasks.Count == 0)
                 {
                     AnsiConsole.MarkupLine("[yellow]No tasks found.[/]");
                 }
-
                 else
                 {
                     var table = new Table();
@@ -43,7 +54,6 @@ namespace TodoListPractice.UI
                     table.AddColumn("[bold]ID[/]");
                     table.AddColumn("[bold]Status[/]");
                     table.AddColumn("[bold]Description[/]");
-
 
                     foreach (var task in tasks)
                     {
@@ -77,11 +87,14 @@ namespace TodoListPractice.UI
                     case "Exit":
                         return;
                 }
-
-
             }
+        }
 
-
+        // Method to add any messages in our menu to display once.
+        // Could be notifications, error messages etc from our last action.
+        public void AddMessage(string msg)
+        {
+            messages.Add(msg);
         }
     }
 }

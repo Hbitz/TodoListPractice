@@ -16,10 +16,15 @@ namespace TodoListPractice.Facade
     {
         private const string FilePath = "tasks.json";
         private readonly TaskNotifier notifier;
+        // This is a callback.
+        // When menu is instantiated and creates a TaskFacade, we pass the menu's AddMessage as a callback.
+        // This ensures our TaskFacade can add messages to the menu, such as error messages etc.
+        private readonly Action<string> addMessageCallback;
 
-        public TaskFacade(TaskNotifier notifier)
+        public TaskFacade(TaskNotifier notifier, Action<string> addMessageCallback)
         {
             this.notifier = notifier;
+            this.addMessageCallback = addMessageCallback;
 
             if (!File.Exists(FilePath))
             {
@@ -81,7 +86,8 @@ namespace TodoListPractice.Facade
             }
             else
             {
-                Console.WriteLine($"Task with ID {id} was not found.");
+                // Notify our Menu to display a message
+                addMessageCallback($"Task with ID {id} was not found.");
             }
         }
 
