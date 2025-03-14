@@ -6,17 +6,23 @@ using System.Text;
 using System.Threading.Tasks;
 using TodoListPractice.Facade;
 using TodoListPractice.Observer;
+using TodoListPractice.Services;
 
 namespace TodoListPractice.UI
 {
     internal class Menu
     {
         private readonly TaskFacade taskFacade;
-        private readonly List<string> messages = new();
+        private readonly TaskNotifier notifier;
+        //private readonly List<string> messages = new();
 
         public Menu(TaskNotifier notifier)
         {
-            taskFacade = new TaskFacade(notifier, AddMessage); // Pass AddMessage method as a callback
+            //notifier = TaskNotifier.Instance; // Pass AddMessage method as callback to notifier to ensure we can display appropriate log messages
+            //notifier.SetCallback(AddMessage);
+            this.notifier = notifier;
+            //taskFacade = new TaskFacade(notifier, AddMessage); // Pass AddMessage method as a callback
+            taskFacade = new TaskFacade(notifier); // Pass AddMessage method as a callback
             var logger = new TaskLogger();
             notifier.Attach(logger);
         }
@@ -28,17 +34,17 @@ namespace TodoListPractice.UI
                 Console.Clear();
                 AnsiConsole.MarkupLine("[bold underline blue]==== TODO LIST ====[/]");
 
-                // Display any messages for the user
-                if (messages.Any())
-                {
-                    Console.WriteLine("----------------------------");
-                    foreach (var msg in messages)
-                    {
-                        Console.WriteLine(msg);
-                    }
-                    Console.WriteLine("----------------------------");
-                    messages.Clear();
-                }
+                //// Display any messages for the user
+                //if (messages.Any())
+                //{
+                //    Console.WriteLine("----------------------------");
+                //    foreach (var msg in messages)
+                //    {
+                //        Console.WriteLine(msg);
+                //    }
+                //    Console.WriteLine("----------------------------");
+                //    messages.Clear();
+                //}
 
 
                 var tasks = taskFacade.GetTodos();
@@ -62,6 +68,9 @@ namespace TodoListPractice.UI
                     }
                     AnsiConsole.Write(table);
                 }
+
+                // Display any messages from the notifier.
+                DisplayMessages();
 
                 var option = AnsiConsole.Prompt(
                     new SelectionPrompt<string>()
@@ -90,11 +99,21 @@ namespace TodoListPractice.UI
             }
         }
 
-        // Method to add any messages in our menu to display once.
-        // Could be notifications, error messages etc from our last action.
-        public void AddMessage(string msg)
+        //// Method to add any messages in our menu to display once.
+        //// Could be notifications, error messages etc from our last action.
+        //public void AddMessage(string msg)
+        //{
+        //    messages.Add(msg);
+        //}
+        // Helper method to display messages from our notifier
+        private void DisplayMessages()
         {
-            messages.Add(msg);
+            var messages = MessageStore.GetMessages();
+            foreach (var msg in messages)
+            {
+                Console.WriteLine(msg);
+            }
+            MessageStore.ClearMessages();
         }
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TodoListPractice.Models;
 
 namespace TodoListPractice.Observer
 {
@@ -10,6 +11,9 @@ namespace TodoListPractice.Observer
     internal class TaskNotifier
     {
         private readonly List<ITaskObserver> observers = new();
+
+        //private Action<string>? addMessageCallback; // store callback
+        public event Action<string>? TaskUpdated;
 
         // Converted to singleton:
         // Made it static so we can access it anywhere
@@ -28,6 +32,11 @@ namespace TodoListPractice.Observer
             }
         }
 
+        //public void SetCallback(Action<string> callback)
+        //{
+        //    addMessageCallback = callback;
+        //}
+
         public void Attach(ITaskObserver observer)
         {
             observers.Add(observer);
@@ -38,12 +47,15 @@ namespace TodoListPractice.Observer
             observers.Remove(observer);
         }
 
-        public void Notify()
+        public void Notify(TaskEventType eventType, TaskItem task)
         {
             foreach (var o in observers)
             {
-                o.Update();
+                o.Update(eventType, task);
             }
+
+            //addMessageCallback?.Invoke("Task has been modified."); //Notify callback, if set
+            //TaskUpdated?.Invoke("Tasks has been modified.");
         }
     }
 }

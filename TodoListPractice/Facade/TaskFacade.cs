@@ -9,6 +9,7 @@ using System.Threading.Tasks.Sources;
 using TodoListPractice.Models;
 using Newtonsoft.Json;
 using TodoListPractice.Observer;
+using TodoListPractice.Services;
 
 namespace TodoListPractice.Facade
 {
@@ -21,10 +22,20 @@ namespace TodoListPractice.Facade
         // This ensures our TaskFacade can add messages to the menu, such as error messages etc.
         private readonly Action<string> addMessageCallback;
 
-        public TaskFacade(TaskNotifier notifier, Action<string> addMessageCallback)
+        //public TaskFacade(TaskNotifier notifier, Action<string> addMessageCallback)
+        //{
+        //    this.notifier = notifier;
+        //    this.addMessageCallback = addMessageCallback;
+
+        //    if (!File.Exists(FilePath))
+        //    {
+        //        File.WriteAllText(FilePath, "[]"); // Creates empty JSON array
+        //    }
+        //}
+
+        public TaskFacade(TaskNotifier notifier)
         {
             this.notifier = notifier;
-            this.addMessageCallback = addMessageCallback;
 
             if (!File.Exists(FilePath))
             {
@@ -54,10 +65,11 @@ namespace TodoListPractice.Facade
             // [-1] does not exist in C#. An older variant is [tasks.Count - 1], but tasks[^1] is a shorthand for that.
             // "Last()" does the same, and  is used for readability.
             int newId = tasks.Count > 0 ? tasks.Last().Id + 1 : 1; // Get next available ID. 
-            tasks.Add(new TaskItem(newId, description));
+            var task = new TaskItem(newId, description);
+            tasks.Add(task);
             SaveTasks(tasks);
 
-            notifier.Notify();
+            notifier.Notify(TaskEventType.TaskCreated,task);
 
         }
 
@@ -69,7 +81,7 @@ namespace TodoListPractice.Facade
             {
                 task.IsCompleted = isCompleted;
                 SaveTasks(tasks);
-                notifier.Notify();
+                notifier.Notify(TaskEventType.TaskUpdated, task);
             }
         }
 
@@ -80,14 +92,15 @@ namespace TodoListPractice.Facade
 
             if (taskToRemove != null )
             {
-                tasks.RemoveAll(t => t.Id == id);
+                tasks.Remove(taskToRemove);
+                //tasks.RemoveAll(t => t.Id == id);
                 SaveTasks(tasks);
-                notifier.Notify();
+                notifier.Notify(TaskEventType.TaskDeleted, taskToRemove);
             }
             else
             {
                 // Notify our Menu to display a message
-                addMessageCallback($"Task with ID {id} was not found.");
+                MessageStore.AddMesage($"Task with ID {id} was not found.");
             }
         }
 
