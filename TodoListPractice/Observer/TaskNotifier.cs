@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace TodoListPractice.Observer
 {
+    // This is both a singleton and an observer, but since it's the only singleton in the application I've decided to let in Observer folder
     internal class TaskNotifier
     {
         private readonly List<ITaskObserver> observers = new();
