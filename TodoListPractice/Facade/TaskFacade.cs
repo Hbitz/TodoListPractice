@@ -29,9 +29,18 @@ namespace TodoListPractice.Facade
 
         public List<TaskItem> GetTodos()
         {
-            string json = File.ReadAllText(FilePath);
-            return JsonConvert.DeserializeObject<List<TaskItem>>(json) ?? new List<TaskItem>();
+            try
+            {
+                string json = File.ReadAllText(FilePath);
+                return JsonConvert.DeserializeObject<List<TaskItem>>(json) ?? new List<TaskItem>();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error reading tasks: {ex.Message}");
+                return new List<TaskItem>(); // Return empty list if file read fails
+            }
         }
+
 
 
         public void AddTodo(string description)
