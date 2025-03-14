@@ -38,7 +38,8 @@ namespace TodoListPractice.Facade
         {
             var tasks = GetTodos();
             // [-1] does not exist in C#. An older variant is [tasks.Count - 1], but tasks[^1] is a shorthand for that.
-            int newId = tasks.Count > 0 ? tasks[^1].Id + 1 : 1; // get next available ID
+            // "Last()" does the same, and  is used for readability.
+            int newId = tasks.Count > 0 ? tasks.Last().Id + 1 : 1; // Get next available ID. 
             tasks.Add(new TaskItem(newId, description));
             SaveTasks(tasks);
 
