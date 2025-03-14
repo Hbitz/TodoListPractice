@@ -17,11 +17,6 @@ namespace TodoListPractice.Facade
     {
         private const string FilePath = "tasks.json";
         private readonly TaskNotifier notifier;
-        // This is a callback.
-        // When menu is instantiated and creates a TaskFacade, we pass the menu's AddMessage as a callback.
-        // This ensures our TaskFacade can add messages to the menu, such as error messages etc.
-        private readonly Action<string> addMessageCallback;
-
 
         public TaskFacade(TaskNotifier notifier)
         {
@@ -80,7 +75,7 @@ namespace TodoListPractice.Facade
             var tasks = GetTodos();
             var taskToRemove = tasks.FirstOrDefault(t => t.Id == id);
 
-            if (taskToRemove != null )
+            if (taskToRemove != null)
             {
                 tasks.Remove(taskToRemove);
                 SaveTasks(tasks);

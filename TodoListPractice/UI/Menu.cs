@@ -18,7 +18,7 @@ namespace TodoListPractice.UI
         public Menu(TaskNotifier notifier)
         {
             this.notifier = notifier;
-            taskFacade = new TaskFacade(notifier); // Pass AddMessage method as a callback
+            taskFacade = new TaskFacade(notifier);
             var logger = new TaskLogger();
             notifier.Attach(logger);
         }
