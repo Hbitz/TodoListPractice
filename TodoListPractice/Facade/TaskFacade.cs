@@ -71,9 +71,18 @@ namespace TodoListPractice.Facade
         public void RemoveTodo(int id)
         {
             var tasks = GetTodos();
-            tasks.RemoveAll(t => t.Id == id);
-            SaveTasks(tasks);
-            notifier.Notify();
+            var taskToRemove = tasks.FirstOrDefault(t => t.Id == id);
+
+            if (taskToRemove != null )
+            {
+                tasks.RemoveAll(t => t.Id == id);
+                SaveTasks(tasks);
+                notifier.Notify();
+            }
+            else
+            {
+                Console.WriteLine($"Task with ID {id} was not found.");
+            }
         }
 
         private void SaveTasks(List<TaskItem> tasks)
