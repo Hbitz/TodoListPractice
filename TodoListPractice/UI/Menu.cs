@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using TodoListPractice.Facade;
 using TodoListPractice.Observer;
 
-namespace TodoListPractice
+namespace TodoListPractice.UI
 {
     internal class Menu
     {
