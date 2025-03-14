@@ -14,14 +14,10 @@ namespace TodoListPractice.UI
     {
         private readonly TaskFacade taskFacade;
         private readonly TaskNotifier notifier;
-        //private readonly List<string> messages = new();
 
         public Menu(TaskNotifier notifier)
         {
-            //notifier = TaskNotifier.Instance; // Pass AddMessage method as callback to notifier to ensure we can display appropriate log messages
-            //notifier.SetCallback(AddMessage);
             this.notifier = notifier;
-            //taskFacade = new TaskFacade(notifier, AddMessage); // Pass AddMessage method as a callback
             taskFacade = new TaskFacade(notifier); // Pass AddMessage method as a callback
             var logger = new TaskLogger();
             notifier.Attach(logger);
@@ -33,19 +29,6 @@ namespace TodoListPractice.UI
             {
                 Console.Clear();
                 AnsiConsole.MarkupLine("[bold underline blue]==== TODO LIST ====[/]");
-
-                //// Display any messages for the user
-                //if (messages.Any())
-                //{
-                //    Console.WriteLine("----------------------------");
-                //    foreach (var msg in messages)
-                //    {
-                //        Console.WriteLine(msg);
-                //    }
-                //    Console.WriteLine("----------------------------");
-                //    messages.Clear();
-                //}
-
 
                 var tasks = taskFacade.GetTodos();
 
@@ -99,12 +82,6 @@ namespace TodoListPractice.UI
             }
         }
 
-        //// Method to add any messages in our menu to display once.
-        //// Could be notifications, error messages etc from our last action.
-        //public void AddMessage(string msg)
-        //{
-        //    messages.Add(msg);
-        //}
         // Helper method to display messages from our notifier
         private void DisplayMessages()
         {

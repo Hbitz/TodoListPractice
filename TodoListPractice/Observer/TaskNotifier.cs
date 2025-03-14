@@ -11,8 +11,6 @@ namespace TodoListPractice.Observer
     internal class TaskNotifier
     {
         private readonly List<ITaskObserver> observers = new();
-
-        //private Action<string>? addMessageCallback; // store callback
         public event Action<string>? TaskUpdated;
 
         // Converted to singleton:
@@ -32,11 +30,6 @@ namespace TodoListPractice.Observer
             }
         }
 
-        //public void SetCallback(Action<string> callback)
-        //{
-        //    addMessageCallback = callback;
-        //}
-
         public void Attach(ITaskObserver observer)
         {
             observers.Add(observer);
@@ -53,9 +46,6 @@ namespace TodoListPractice.Observer
             {
                 o.Update(eventType, task);
             }
-
-            //addMessageCallback?.Invoke("Task has been modified."); //Notify callback, if set
-            //TaskUpdated?.Invoke("Tasks has been modified.");
         }
     }
 }

@@ -15,7 +15,6 @@ namespace TodoListPractice.Observer
         // If observers need full details, we could use TaskEvent
         public void Update(TaskEventType eventType, TaskItem task)
         {
-            ///Console.WriteLine("[LOG]: Tasks have been modified.");
             switch (eventType)
             {
                 case TaskEventType.TaskCreated:

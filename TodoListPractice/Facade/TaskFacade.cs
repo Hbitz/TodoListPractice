@@ -22,16 +22,6 @@ namespace TodoListPractice.Facade
         // This ensures our TaskFacade can add messages to the menu, such as error messages etc.
         private readonly Action<string> addMessageCallback;
 
-        //public TaskFacade(TaskNotifier notifier, Action<string> addMessageCallback)
-        //{
-        //    this.notifier = notifier;
-        //    this.addMessageCallback = addMessageCallback;
-
-        //    if (!File.Exists(FilePath))
-        //    {
-        //        File.WriteAllText(FilePath, "[]"); // Creates empty JSON array
-        //    }
-        //}
 
         public TaskFacade(TaskNotifier notifier)
         {
@@ -93,13 +83,12 @@ namespace TodoListPractice.Facade
             if (taskToRemove != null )
             {
                 tasks.Remove(taskToRemove);
-                //tasks.RemoveAll(t => t.Id == id);
                 SaveTasks(tasks);
                 notifier.Notify(TaskEventType.TaskDeleted, taskToRemove);
             }
             else
             {
-                // Notify our Menu to display a message
+                // Store message so we can display it in the menu
                 MessageStore.AddMesage($"Task with ID {id} was not found.");
             }
         }
