@@ -28,12 +28,29 @@ namespace TodoListPractice.Facade
             }
         }
 
-        public List<TaskItem> GetTodos()
+        public List<TaskItem> GetTodos(SortOption sortOption = SortOption.ByIdAscending)
         {
             try
             {
+                // Return empty list if file doesn't exist.
+                if (!File.Exists(FilePath))
+                {
+                    return new List<TaskItem>();
+                }
                 string json = File.ReadAllText(FilePath);
-                return JsonConvert.DeserializeObject<List<TaskItem>>(json) ?? new List<TaskItem>();
+                var tasks = JsonConvert.DeserializeObject<List<TaskItem>>(json) ?? new List<TaskItem>();
+
+                // Sort based on choice
+                return sortOption switch
+                {
+                    SortOption.ByIdAscending => tasks.OrderBy(t => t.Id).ToList(),
+                    SortOption.ByIdDescending => tasks.OrderByDescending(t => t.Id).ToList(),
+                    SortOption.ByDescriptionAscending => tasks.OrderBy(t => t.Description).ToList(),
+                    SortOption.ByDescriptionDescending => tasks.OrderByDescending(t => t.Description).ToList(),
+                    SortOption.ByCompletedFirst => tasks.OrderByDescending(t => t.IsCompleted).ToList(),
+                    SortOption.ByPendingFirst => tasks.OrderBy(t => t.IsCompleted).ToList(),
+                    _ => tasks
+                };
             }
             catch (Exception ex)
             {

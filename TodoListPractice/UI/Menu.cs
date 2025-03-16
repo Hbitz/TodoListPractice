@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TodoListPractice.Facade;
+using TodoListPractice.Models;
 using TodoListPractice.Observer;
 using TodoListPractice.Services;
 
@@ -14,6 +15,7 @@ namespace TodoListPractice.UI
     {
         private readonly TaskFacade taskFacade;
         private readonly TaskNotifier notifier;
+        private SortOption currentSortOption = SortOption.ByIdAscending;
 
         public Menu(TaskNotifier notifier)
         {
@@ -30,7 +32,7 @@ namespace TodoListPractice.UI
                 Console.Clear();
                 AnsiConsole.MarkupLine("[bold underline blue]==== TODO LIST ====[/]");
 
-                var tasks = taskFacade.GetTodos();
+                var tasks = taskFacade.GetTodos(currentSortOption);
 
                 if (tasks.Count == 0)
                 {
@@ -59,7 +61,7 @@ namespace TodoListPractice.UI
                     new SelectionPrompt<string>()
                         .Title("Select an option")
                         .PageSize(10)
-                        .AddChoices(new[] { "Add Task", "Mark Task as Completed", "Remove Task", "Exit" })
+                        .AddChoices(new[] { "Add Task", "Mark Task as Completed", "Remove Task", "Change Sorting", "Exit" })
                 );
 
                 switch (option)
@@ -76,6 +78,9 @@ namespace TodoListPractice.UI
                         int removeId = AnsiConsole.Ask<int>("Enter task ID to remove:");
                         taskFacade.RemoveTodo(removeId);
                         break;
+                    case "Change Sorting":
+                        ChangeSorting();
+                        break;
                     case "Exit":
                         return;
                 }
@@ -91,6 +96,27 @@ namespace TodoListPractice.UI
                 Console.WriteLine(msg);
             }
             MessageStore.ClearMessages();
+        }
+
+        // Method to let user change the sorting order of the ToDo's.
+        private void ChangeSorting()
+        {
+            var sortOption = AnsiConsole.Prompt(
+                new SelectionPrompt<string>()
+                    .Title("Select sorting order")
+                    .AddChoices(new[] { "ID Ascending", "ID Descending", "Description Ascending", "Description Descending", "Completed first", "Pending first" })
+            );
+
+            currentSortOption = sortOption switch
+            {
+                "ID Ascending" => SortOption.ByIdAscending,
+                "ID Descending" => SortOption.ByIdDescending,
+                "Description Ascending" => SortOption.ByDescriptionAscending,
+                "Description Descending" => SortOption.ByDescriptionDescending,
+                "Completed first" => SortOption.ByCompletedFirst,
+                "Pending first" => SortOption.ByPendingFirst,
+                _ => currentSortOption
+            };
         }
     }
 }
