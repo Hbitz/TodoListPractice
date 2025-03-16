@@ -11,7 +11,6 @@ namespace TodoListPractice.Observer
     internal class TaskNotifier
     {
         private readonly List<ITaskObserver> observers = new();
-        public event Action<string>? TaskUpdated;
 
         // Converted to singleton:
         // Made it static so we can access it anywhere
@@ -22,7 +21,7 @@ namespace TodoListPractice.Observer
             get
             {
                 // Instantiation it once, then simply return it from then on.
-                if (_instance == null) 
+                if (_instance == null)
                 {
                     _instance = new TaskNotifier();
                 }
