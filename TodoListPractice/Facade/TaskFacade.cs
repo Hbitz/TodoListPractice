@@ -10,6 +10,7 @@ using TodoListPractice.Models;
 using Newtonsoft.Json;
 using TodoListPractice.Observer;
 using TodoListPractice.Services;
+using System.Collections;
 
 namespace TodoListPractice.Facade
 {
@@ -57,6 +58,21 @@ namespace TodoListPractice.Facade
                 Console.WriteLine($"Error reading tasks: {ex.Message}");
                 return new List<TaskItem>(); // Return empty list if file read fails
             }
+        }
+
+
+        // We use fuzzy searching with LevenshteinDistance.
+        // In english, this allows user to make several typos in search and still get relevant results.
+        // e.g. get the "buy food" task back if they search for "Buy fod" or "buy foos".
+        public List<TaskItem> SearchTodos(string searchQuery)
+        {
+            var tasks = GetTodos();
+            return tasks.
+                Where(t =>
+                    t.Description.IndexOf(searchQuery, StringComparison.OrdinalIgnoreCase) >= 0 || // Standard searching, e.g "buy" gets todos that contains "buy".
+                    LevenshteinDistance.Compute(t.Description.ToLower(), searchQuery.ToLower()) <= 3) // 3 is the maximum amount of single characters away from our searched string.
+                .ToList(); 
+
         }
 
 

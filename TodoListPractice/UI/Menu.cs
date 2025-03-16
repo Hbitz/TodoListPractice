@@ -61,7 +61,7 @@ namespace TodoListPractice.UI
                     new SelectionPrompt<string>()
                         .Title("Select an option")
                         .PageSize(10)
-                        .AddChoices(new[] { "Add Task", "Mark Task as Completed", "Remove Task", "Change Sorting", "Exit" })
+                        .AddChoices(new[] { "Add Task", "Mark Task as Completed", "Remove Task", "Search Task", "Change Sorting", "Exit" })
                 );
 
                 switch (option)
@@ -78,6 +78,9 @@ namespace TodoListPractice.UI
                         int removeId = AnsiConsole.Ask<int>("Enter task ID to remove:");
                         taskFacade.RemoveTodo(removeId);
                         break;
+                    case "Search Task":
+                        SearchAndDisplayResults();
+                        break;
                     case "Change Sorting":
                         ChangeSorting();
                         break;
@@ -85,6 +88,35 @@ namespace TodoListPractice.UI
                         return;
                 }
             }
+        }
+
+        // Searching task descriptions based on user input
+        private void SearchAndDisplayResults()
+        {
+            var searchQuery = AnsiConsole.Ask<string>("Enter search term:");
+            var results = taskFacade.SearchTodos(searchQuery);
+
+            if (results.Count == 0)
+            {
+                AnsiConsole.MarkupLine("[yellow]No matching tasks found.[/]");
+            }
+            else
+            {
+                var table = new Table();
+                table.Border = TableBorder.Rounded;
+                table.AddColumn("[bold]ID[/]");
+                table.AddColumn("[bold]Status[/]");
+                table.AddColumn("[bold]Description[/]");
+
+                foreach (var task in results)
+                {
+                    string status = task.IsCompleted ? "[green]Completed[/]" : "[red]Pending[/]";
+                    table.AddRow(task.Id.ToString(), status, task.Description);
+                }
+                AnsiConsole.Write(table);
+            }
+            AnsiConsole.MarkupLine("[blue]Press any key to return to the menu...[/]");
+            Console.ReadKey();
         }
 
         // Helper method to display messages from our notifier
